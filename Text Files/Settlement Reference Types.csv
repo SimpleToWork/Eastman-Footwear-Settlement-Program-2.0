@@ -1,0 +1,154 @@
+ID,Transaction_Type,Fee_Category,Fee_Type,Credit Memo Class,Credit Memo Sub Class,Notes,CLASS CODE,SUBCLASS CODE
+1,a-to-z guarantee refund,item_related_fee_type,commission,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+2,a-to-z guarantee refund,item_related_fee_type,fixedclosingfee,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+3,a-to-z guarantee refund,item_related_fee_type,refundcommission,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+4,a-to-z guarantee refund,item_related_fee_type,shippinghb,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+5,a-to-z guarantee refund,price_type,marketplacefacilitatortax-principal,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+6,a-to-z guarantee refund,price_type,principal,RETURNS,REFUNDS,Refund Revenue,RETURNS,REFUNDS
+7,a-to-z guarantee refund,price_type,shipping,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+8,A2ZGuaranteeRecovery,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+9,Adjustment,,,ADJUSTMENTS,MISC ADJUSTMENTS,Adjustments,ADJUST,MISCADJ
+10,adjustment for financial transaction,,,ADJUSTMENTS,MISC ADJUSTMENTS,Adjustments,ADJUST,MISCADJ
+11,Amazon Capital Services,,,MISC,LOAN,Miscellanious,X,X
+12,BalanceAdjustment,,,N/A,BALANCE SETTLEMENT,Miscellanious,X,X
+13,BuyerRecharge,,,ADJUSTMENTS,MISC ADJUSTMENTS,Adjustments,ADJUST,MISCADJ
+14,Chargeback Refund,ITEM_RELATED_FEE_TYPE,Commission,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+15,Chargeback Refund,ITEM_RELATED_FEE_TYPE,RefundCommission,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+16,Chargeback Refund,ITEM_RELATED_FEE_TYPE,ShippingChargeback,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+17,chargeback refund,price_type,marketplacefacilitatortax-principal,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+18,Chargeback Refund,PRICE_TYPE,Principal,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+19,Chargeback Refund,PRICE_TYPE,RestockingFee,AMAZON FEES,FBA RESTOCKING,Inventory Fees,AMZF,FBARES
+20,Chargeback Refund,PRICE_TYPE,Shipping,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+21,chargeback refund,price_type,tax,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+22,CommissionCorrection,,,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+23,COMPENSATED_CLAWBACK,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+24,CouponRedemptionFee,ITEM_RELATED_FEE_TYPE,CouponRedemptionFee,ADVERTISING ALLOW,ADVERTISING,Marketing,ADV,ADVE
+25,creturn_wrong_item,,,ADJUSTMENTS,MISC FEES,Miscellanious,ADJUST,MISCFEE
+26,CS_ERROR_ITEMS,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+27,CS_ERROR_NON_ITEMIZED,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+28,Current Reserve Amount,,,N/A,BALANCE SETTLEMENT,Miscellanious,X,X
+29,Delivery label purchased through Amazon,,,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+30,DisposalComplete,,,AMAZON FEES,FBA REMOVAL,Inventory Fees,AMZF,FBAREM
+31,FBA Inventory Reimbursement - Customer Return,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+32,FBA Inventory Reimbursement - Customer Service Issue,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+33,FBA Inventory Reimbursement - Damaged:Inbound,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+34,FBA Inventory Reimbursement - Damaged:Warehouse,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+35,FBA Inventory Reimbursement - Fee correction,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+36,FBA Inventory Reimbursement - Lost:Inbound,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+37,FBA Inventory Reimbursement - Lost:Warehouse,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+38,fbainbounddefectfee_bagging,,,AMAZON FEES,FBA INBOUND,Inventory Fees,AMZF,FBAIN
+39,FBAInboundTransportationFee,,,AMAZON FEES,FBA INBOUND,Inventory Fees,AMZF,FBAIN
+40,FBAInboundTransportationFee,,Cancelled Shipment - Charge Discrepency,AMAZON FEES,FBA INBOUND,Inventory Fees,AMZF,FBAIN
+41,Fee Adjustment,,,ADJUSTMENTS,MISC ADJUSTMENTS,Adjustments,ADJUST,MISCADJ
+42,Fee Adjustment,ITEM_RELATED_FEE_TYPE,Fba Pick & Pack Fee,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+43,FREE_REPLACEMENT_REFUND_ITEMS,,,ADJUSTMENTS,MISC ADJUSTMENTS,Adjustments,ADJUST,MISCADJ
+44,INBOUND_CARRIER_DAMAGE,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+45,INCORRECT_FEES_ITEMS,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+46,INCORRECT_FEES_NON_ITEMIZED,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+47,Inventory Placement Service Fee,,,AMAZON FEES,FBA INBOUND,Inventory Fees,AMZF,FBAIN
+48,Inventory Storage Overage Fee,,,AMAZON FEES,FBA STORAGE,Inventory Fees,AMZF,FBAST
+49,Lightning Deal Fee,ITEM_RELATED_FEE_TYPE,LightningDealFee,ADVERTISING ALLOW,ADVERTISING,Marketing,ADV,ADVE
+50,Manual Processing Fee,,,ADJUSTMENTS,MISC FEES,Miscellanious,ADJUST,MISCFEE
+51,Manual Processing Fee Reimbursement,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+52,MiscAdjustment,,,ADJUSTMENTS,MISC ADJUSTMENTS,Adjustments,ADJUST,MISCADJ
+53,MISSING_FROM_INBOUND,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+54,MISSING_FROM_INBOUND_CLAWBACK,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+55,multichannel_order_late,,,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+56,NonSubscriptionFeeAdj,,,ADJUSTMENTS,MISC ADJUSTMENTS,Adjustments,ADJUST,MISCADJ
+64,Order,ITEM_RELATED_FEE_TYPE,SalesTaxServiceFee,ADJUSTMENTS,MISC FEES,Miscellanious,ADJUST,MISCFEE
+67,Order,ITEM_RELATED_FEE_TYPE,TransactionFee,ADJUSTMENTS,MISC FEES,Miscellanious,ADJUST,MISCFEE
+90,Order,SHIPMENT_TYPE,Multi-Channel Fulfillment Brand-Neutral Box Fee,ADJUSTMENTS,MISC FEES,Miscellanious,ADJUST,MISCFEE
+58,Order,ITEM_RELATED_FEE_TYPE,Commission,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+59,Order,ITEM_RELATED_FEE_TYPE,FBAPerOrderFulfillmentFee,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+60,Order,ITEM_RELATED_FEE_TYPE,FBAPerUnitFulfillmentFee,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+61,Order,ITEM_RELATED_FEE_TYPE,FBAWeightBasedFee,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+62,Order,ITEM_RELATED_FEE_TYPE,FixedClosingFee,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+63,Order,ITEM_RELATED_FEE_TYPE,GiftwrapChargeback,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+65,Order,ITEM_RELATED_FEE_TYPE,ShippingChargeback,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+66,Order,ITEM_RELATED_FEE_TYPE,ShippingHB,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+68,Order,ITEM_RELATED_FEE_TYPE,VariableClosingFee,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+69,Order,PRICE_TYPE,GiftWrap,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+72,Order,PRICE_TYPE,LowValueGoods-Shipping,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+84,Order,PRICE_TYPE,Shipping,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+88,Order,PROMOTION_TYPE,Shipping,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+89,Order,SHIPMENT_TYPE,FBA transportation fee,AMAZON FEES,FBA INBOUND,Inventory Fees,AMZF,FBAIN
+57,Order,,,N/A,REVENUE,Order Revenue,ADJUST,MISCADJ
+70,Order,PRICE_TYPE,GiftWrapTax,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+71,Order,PRICE_TYPE,LowValueGoods-Principal,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+73,Order,PRICE_TYPE,LowValueGoodsTax-Other,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+74,Order,PRICE_TYPE,LowValueGoodsTax-Principal,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+75,Order,PRICE_TYPE,LowValueGoodsTax-Shipping,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+76,Order,PRICE_TYPE,MarketplaceFacilitatorTax-Other,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+77,Order,PRICE_TYPE,MarketplaceFacilitatorTax-Principal,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+78,Order,PRICE_TYPE,MarketplaceFacilitatorTax-Shipping,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+79,Order,PRICE_TYPE,MarketplaceFacilitatorVAT-Principal,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+80,Order,PRICE_TYPE,MarketplaceFacilitatorVAT-Shipping,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+81,Order,PRICE_TYPE,Principal,N/A,REVENUE,Order Revenue,ADJUST,MISCADJ
+82,Order,PRICE_TYPE,Retrocharge_Tax,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+83,Order,PRICE_TYPE,Retrocharge_Tax-Other,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+85,Order,PRICE_TYPE,ShippingTax,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+86,Order,PRICE_TYPE,Tax,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+87,Order,PROMOTION_TYPE,Principal,N/A,REVENUE,Order Revenue,ADJUST,MISCADJ
+91,Order_Retrocharge,PRICE_TYPE,Tax,N/A,SALES TAX,Order Revenue,ADJUST,MISCADJ
+92,Paid Services Fee,,,ADJUSTMENTS,MISC FEES,Miscellanious,ADJUST,MISCFEE
+93,Payable to Amazon,,,N/A,BALANCE SETTLEMENT,Miscellanious,X,X
+94,PAYMENT_RETRACTION_ITEMS,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+95,PREPFEE_REFUND,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+96,Previous Reserve Amount Balance,,,N/A,BALANCE SETTLEMENT,Miscellanious,X,X
+97,Professional Service Fee,,,ADJUSTMENTS,MISC FEES,Miscellanious,ADJUST,MISCFEE
+98,RE_EVALUATION,,,ADJUSTMENTS,MISC ADJUSTMENTS,Adjustments,ADJUST,MISCADJ
+99,Refund,ITEM_RELATED_FEE_TYPE,Commission,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+100,Refund,ITEM_RELATED_FEE_TYPE,FixedClosingFee,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+101,Refund,ITEM_RELATED_FEE_TYPE,GiftwrapChargeback,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+102,Refund,ITEM_RELATED_FEE_TYPE,RefundCommission,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+103,Refund,ITEM_RELATED_FEE_TYPE,ShippingChargeback,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+104,Refund,ITEM_RELATED_FEE_TYPE,ShippingHB,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+105,refund,item_related_fee_type,variableclosingfee,AMAZON FEES,COMMISSION,Order Related Fees,AMZF,COMMIS
+106,Refund,PRICE_TYPE,GiftWrap,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+107,Refund,PRICE_TYPE,GiftWrapTax,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+108,Refund,PRICE_TYPE,Goodwill,ADJUSTMENTS,MISC FEES,Miscellanious,ADJUST,MISCFEE
+109,refund,price_type,lowvaluegoodstax-principal,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+110,refund,price_type,lowvaluegoodstax-shipping,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+111,Refund,PRICE_TYPE,MarketplaceFacilitatorTax-Other,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+112,Refund,PRICE_TYPE,MarketplaceFacilitatorTax-Principal,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+113,Refund,PRICE_TYPE,MarketplaceFacilitatorTax-RestockingFee,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+114,Refund,PRICE_TYPE,MarketplaceFacilitatorTax-Shipping,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+115,refund,price_type,marketplacefacilitatorvat-principal,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+116,refund,price_type,marketplacefacilitatorvat-shipping,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+117,Refund,PRICE_TYPE,Principal,RETURNS,REFUNDS,Refund Revenue,RETURNS,REFUNDS
+118,Refund,PRICE_TYPE,RestockingFee,AMAZON FEES,FBA RESTOCKING,Inventory Fees,AMZF,FBARES
+119,Refund,PRICE_TYPE,Retrocharge_Tax,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+120,Refund,PRICE_TYPE,ReturnShipping,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+121,Refund,PRICE_TYPE,Shipping,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+122,Refund,PRICE_TYPE,ShippingTax,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+123,Refund,PRICE_TYPE,Tax,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+124,Refund,PROMOTION_TYPE,Principal,RETURNS,REFUNDS,Refund Revenue,RETURNS,REFUNDS
+125,Refund,PROMOTION_TYPE,Shipping,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+126,Refund_Retrocharge,PRICE_TYPE,Tax,RETURNS,SALES TAX,Refund Revenue,RETURNS,SLSTAX
+127,REMOVAL_ORDER_DAMAGED,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+128,REMOVAL_ORDER_LOST,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+129,RemovalComplete,,,AMAZON FEES,FBA REMOVAL,Inventory Fees,AMZF,FBAREM
+130,REVERSAL_REIMBURSEMENT,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+131,REVERSAL_REIMBURSEMENT,,GoodWill,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+132,SellerReviewEnrollmentPayment,ITEM_RELATED_FEE_TYPE,Review Enrollment Fee,ADVERTISING ALLOW,ADVERTISING,Marketing,ADV,ADVE
+133,ServiceFee,ITEM_RELATED_FEE_TYPE,Cost of Advertising,ADVERTISING ALLOW,ADVERTISING,Marketing,ADV,ADVE
+134,ServiceFee,ITEM_RELATED_FEE_TYPE,FBACustomerReturnPerOrderFee,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+135,ServiceFee,ITEM_RELATED_FEE_TYPE,FBACustomerReturnPerUnitFee,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+136,ServiceFee,ITEM_RELATED_FEE_TYPE,FBACustomerReturnWeightBasedFee,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+137,ServiceFee,ITEM_RELATED_FEE_TYPE,Refund for Advertiser,ADVERTISING ALLOW,ADVERTISING,Marketing,ADV,ADVE
+138,Shipping label purchase,,,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+139,Shipping label purchase for return,,,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+140,ShippingServicesRefund,,,AMAZON FEES,FULFILLMENT,Order Related Fees,AMZF,FULFIL
+141,Storage Fee,,,AMAZON FEES,FBA STORAGE,Inventory Fees,AMZF,FBAST
+142,StorageRenewalBilling,,,AMAZON FEES,FBA STORAGE,Inventory Fees,AMZF,FBAST
+143,Subscription Fee,,,ADJUSTMENTS,MISC FEES,Miscellanious,ADJUST,MISCFEE
+144,SubscriptionFeeCorrection,,,ADJUSTMENTS,MISC FEES,Miscellanious,ADJUST,MISCFEE
+145,Successful charge,,,N/A,BALANCE SETTLEMENT,Miscellanious,X,X
+146,transfer of funds unsuccessful: amazon has cancelled your transfer of funds.,,,N/A,BALANCE SETTLEMENT,Miscellanious,X,X
+147,transfer of funds unsuccessful: there is no available balance to transfer.,,,N/A,BALANCE SETTLEMENT,Miscellanious,X,X
+148,transfer of funds unsuccessful: we could not transfer funds to your bank account because the account information on file is invalid. please update your bank account information. bank tranfer id: 091000016002223,,,N/A,BALANCE SETTLEMENT,Miscellanious,X,X
+149,WAREHOUSE_DAMAGE,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+150,WAREHOUSE_DAMAGE_EXCEPTION,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+151,WAREHOUSE_LOST,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+152,WAREHOUSE_LOST_MANUAL,,,ADJUSTMENTS,REIMBURSEMENTS,Adjustments,ADJUST,REIMB
+153,WarehousePrep,,,AMAZON FEES,FBA INBOUND,Inventory Fees,AMZF,FBAIN

@@ -12,6 +12,19 @@ bin-release/
 *.air
 *.ipa
 *.apk
+~$*
+
+*.ini
+**/__pycache__
+**/.idea
+*.gsheet
+**/Final Reports
+**/Google Sheets
+**/Joes Files
+**/Data Files
+**/Python Files/__pycache__
+**/venv
+*token.json
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
