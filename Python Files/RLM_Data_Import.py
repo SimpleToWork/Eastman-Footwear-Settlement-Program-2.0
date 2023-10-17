@@ -326,7 +326,7 @@ def Run_Program(project_folder):
     export_rlm_datas()
     convert_store_codes()
     google_sheet_update(project_folder=project_folder, program_name="Eastman Settlement Program",
-                        method="Settlement Conversion Program")
+                        method="RLM Data Import")
 
 
 if __name__ == "__main__":
