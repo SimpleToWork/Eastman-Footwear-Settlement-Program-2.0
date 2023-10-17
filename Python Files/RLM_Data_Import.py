@@ -5,6 +5,8 @@ from datetime import datetime
 import getpass
 from sqlalchemy import create_engine
 import Database_Modules
+from Settlement_Conversion_Program import google_sheet_update
+
 
 
 
@@ -316,19 +318,23 @@ def convert_store_codes():
     df1.to_csv(f'{folder1}\\FBA Store Codes.csv', index=False)
 
 
-def Run_Program():
+def Run_Program(project_folder):
     recruit_files()
     import_data_to_sql()
     import_excel_files_to_sql()
     rlm_data_logic()
     export_rlm_datas()
     convert_store_codes()
+    google_sheet_update(project_folder=project_folder, program_name="Eastman Settlement Program",
+                        method="Settlement Conversion Program")
 
 
 if __name__ == "__main__":
     folder = f'G:\\My Drive\\Simple To Work\\9 - New Projects\\Eastman Footwear\\Eastman_Footwear_FBA_Shipment_Tool\\Data Files\\RLM Data\\'
     folder1 = f'G:\\My Drive\\Simple To Work\\9 - New Projects\\Eastman Footwear\\Eastman_Footwear_FBA_Shipment_Tool\\Data Files'
     Project_name = 'eastman_footwear_amazon_seller_central'
+    project_folder = f'C:\\Users\\{getpass.getuser()}\\Desktop\\New Projects\\Eastman Footwear\\Eastman-Footwear-Settlement-Program-2.0'
     engine = engine_setup(Project_name=Project_name, hostname='localhost', username='root',password='Simple123', port=3306)
-    Run_Program()
+
+    Run_Program(project_folder)
 

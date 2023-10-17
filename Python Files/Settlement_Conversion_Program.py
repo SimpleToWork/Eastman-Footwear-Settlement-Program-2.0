@@ -8,6 +8,30 @@ from sqlalchemy import create_engine, inspect
 import Database_Modules
 from Database_Modules import print_color, create_folder, run_sql_scripts
 from openpyxl import load_workbook
+from google_sheets_api import GoogleSheetsAPI
+import platform
+
+
+
+def google_sheet_update(project_folder, program_name, method):
+    text_folder = f'{project_folder}\\Text Files'
+    create_folder(text_folder)
+    client_secret_file = f'{project_folder}\\Text Files\\client_secret.json'
+    token_file = f'{project_folder}\\Text Files\\token.json'
+    sheet_id = '19FUWyywrtS4JTbOHW_GqDSEl0orqu99XCJJFa4upVlw'
+    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+    GsheetAPI = GoogleSheetsAPI(credentials_file=client_secret_file, token_file=token_file, scopes=SCOPES, sheet_id=sheet_id)
+
+    computer_name = platform.node()
+    user = getpass.getuser()
+    time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    data_list = [time_now, computer_name, user, program_name, method, True]
+    sheet_name = 'Eastman Footwear'
+
+    GsheetAPI.insert_row_to_sheet(sheetname=sheet_name, gid=1437113706,
+                                  insert_range=['A', 1, "F", 1],
+                                  data=[data_list])
+
 
 
 def engine_setup(project_name='', hostname='', username='', password='', port=''):
@@ -1307,23 +1331,26 @@ def generate_files(engine, start_date, export_path, sales_template, credit_templ
         # break
 
 
-def run_program(project_name, start_date, export_path, sales_template, credit_template):
+def run_program(project_name, start_date, export_path, sales_template, credit_template, project_folder):
     hostname = 'localhost'
     username = 'root'
     password = 'Simple123'
     port = 3306
+
     engine = engine_setup(project_name=project_name , hostname=hostname, username=username, password=password, port=port)
 
-    import_settlement_reference_data(engine=engine, project_name=project_name)
-    export_sku_without_upc(engine=engine,start_date=start_date, end_date = datetime.datetime.now().strftime('%Y-%m-%d'), export_path=export_path)
-    generate_files(engine=engine, start_date =start_date, export_path=export_path, sales_template=sales_template, credit_template=credit_template)
-
+    # import_settlement_reference_data(engine=engine, project_name=project_name)
+    # export_sku_without_upc(engine=engine,start_date=start_date, end_date = datetime.datetime.now().strftime('%Y-%m-%d'), export_path=export_path)
+    # generate_files(engine=engine, start_date =start_date, export_path=export_path, sales_template=sales_template, credit_template=credit_template)
+    google_sheet_update(project_folder=project_folder, program_name="Eastman Settlement Program", method="Settlement Conversion Program")
 
 if __name__ == "__main__":
     project_name = 'eastman_footwear_amazon_seller_central'
     export_path = f'C:\\Users\\{getpass.getuser()}\\Dropbox\\Eastman Footwear\\Settlement Program'
     sales_template = f'G:\\My Drive\\Simple To Work\\9 - New Projects\\Eastman Footwear\\Eastman-Footwear-Settlement-Program\\Text Files\\RLM Template.xls'
     credit_template = f'G:\\My Drive\\Simple To Work\\9 - New Projects\\Eastman Footwear\\Eastman-Footwear-Settlement-Program\\Text Files\\Credit Import Template.xls'
+    project_folder = f'C:\\Users\\{getpass.getuser()}\\Desktop\\New Projects\\Eastman Footwear\\Eastman-Footwear-Settlement-Program-2.0'
     start_date = "2022-04-28"
-    run_program(project_name , start_date, export_path, sales_template, credit_template)
+
+    run_program(project_name , start_date, export_path, sales_template, credit_template, project_folder)
 
