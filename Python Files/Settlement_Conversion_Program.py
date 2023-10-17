@@ -62,8 +62,8 @@ def export_sku_without_upc(engine=None, start_date=None, end_date=None, export_p
     scripts.append(f'''drop table if exists settlement_skus;''')
     scripts.append(f'''create table if not exists settlement_skus(primary key(account_name, sku))
         select distinct account_name, sku from settlements
-        where  DATE(CONVERT_TZ(`POSTED-DATE`,'US/Eastern','US/Pacific')) >=  "2022-04-28"
-        and DATE(CONVERT_TZ(`POSTED-DATE`,'US/Eastern','US/Pacific')) <=  "2023-09-28"
+        where  DATE(CONVERT_TZ(`POSTED-DATE`,'US/Eastern','US/Pacific')) >=  "{start_date}"
+        and DATE(CONVERT_TZ(`POSTED-DATE`,'US/Eastern','US/Pacific')) <=  "{end_date}"
         and (sku != "" and sku is not null);''')
 
     scripts.append(f'drop table if exists RLM_Missing_UPCS;')
@@ -178,9 +178,8 @@ def generate_settlements_reference_table(engine=None, settlement_id=None, compan
     ('18365151091',	'17.59194528'),
     ('18451175181',	'17.36609626'),
     ('18540833851',	'17.29806043'),
-    ('18632345621',	'17.37202966')
-    
-    
+    ('18632345621',	'17.37202966'),
+    ('18723060791',	'17.70046457')    
     ; ''')
 
     run_sql_scripts(engine=engine, scripts=scripts)
@@ -216,7 +215,7 @@ def sales_files_logic(engine=None):
     scripts.append(f'drop table if exists program_settlement_order_conversion;')
     scripts.append(f'''create table if not exists program_settlement_order_conversion(primary key(company_name, order_id, sku))
         select ACCOUNT_NAME as company_name, SETTLEMENT_ID, CURRENCY,  ifnull(ORDER_ID,"") as Order_ID, SKU, POSTED_DATE,Start_Date,End_Date,
-        sum(QUANTITY_PURCHASED) as quantity,
+        sum(case when FEE_TYPE in  ("Principal") then QUANTITY_PURCHASED else null end ) as quantity,
         sum(AMOUNT) as total_amount,
         sum(case when FEE_CATEGORY = "ItemPrice" AND FEE_TYPE ="Principal" then AMOUNT else 0 end) as Principal,
         sum(case when FEE_TYPE like '%tax%' then amount else 0 end) as Tax,
@@ -233,7 +232,7 @@ def sales_files_logic(engine=None):
     scripts.append(f'drop table if exists program_settlement_order_conversion_fbm;')
     scripts.append(f'''create table if not exists program_settlement_order_conversion_fbm(primary key(company_name, order_id, sku))
             select ACCOUNT_NAME as company_name, SETTLEMENT_ID, CURRENCY,  ifnull(ORDER_ID,"") as Order_ID, SKU, POSTED_DATE,Start_Date,End_Date,
-            sum(QUANTITY_PURCHASED) as quantity,
+            sum(case when FEE_TYPE in  ("Principal") then QUANTITY_PURCHASED else null end ) as quantity,
             sum(AMOUNT) as total_amount,
             sum(case when FEE_CATEGORY = "ItemPrice" AND FEE_TYPE ="Principal" then AMOUNT else 0 end) as Principal,
             sum(case when FEE_TYPE like '%tax%' then amount else 0 end) as Tax,
@@ -287,12 +286,12 @@ def sales_files_logic(engine=None):
         select 
         "1" as Company,
         DIVISION,
-        Case when company_name = "Brilliant_Footwear" then  "EASFO02"
+        Case when company_name = "Brilliant Footwear" then  "EASFO02"
                 when company_name = "Shoe Pro" then  "EASFO02"
                 when company_name = "Staple On Retail Group" then  "EASFO02"
         end
         as `Customer_Number`,
-         Case when company_name = "Brilliant_Footwear" then  1
+         Case when company_name = "Brilliant Footwear" then  1
                 when company_name = "Shoe Pro" then  2
                 when company_name = "Staple On Retail Group" then  3
         END AS Store_Number,
@@ -324,8 +323,11 @@ def sales_files_logic(engine=None):
         SIZE as Size_Code,
         -- "" as Size_Code,
         SUM(quantity) as Units,
-        round(Principal / quantity,4) as Customer_Price,
-        round(Principal / quantity,4) as Cop_Price,
+        round(Principal / quantity,2) as Customer_Price,
+        round(Principal / quantity,2) as Cop_Price,
+        round(Principal / quantity,4) as Customer_Price_1,
+        round(Principal / quantity,4) as Cop_Price_1,
+        
         0 as Dollar_Discount,
         "" as Blank_7,
         "" as Blank_8,
@@ -351,12 +353,12 @@ def sales_files_logic(engine=None):
          select 
         "1" as Company,
         DIVISION,
-        Case when company_name = "Brilliant_Footwear" then  "EASFO06"
+        Case when company_name = "Brilliant Footwear" then  "EASFO06"
                 when company_name = "Shoe Pro" then  "EASFO06"
                 when company_name = "Staple On Retail Group" then  "EASFO06"
         end
         as `Customer_Number`,
-         Case when company_name = "Brilliant_Footwear" then  1
+         Case when company_name = "Brilliant Footwear" then  1
                 when company_name = "Shoe Pro" then  2
                 when company_name = "Staple On Retail Group" then  3
         END AS Store_Number,
@@ -388,8 +390,10 @@ def sales_files_logic(engine=None):
          SIZE as Size_Code,
 --         "" as Size_Code,
         SUM(quantity) as Units,
-         round(Principal / quantity,4) as Customer_Price,
-         round(Principal / quantity,4) as Cop_Price,
+        round(Principal / quantity,2) as Customer_Price,
+        round(Principal / quantity,2) as Cop_Price,
+        round(Principal / quantity,4) as Customer_Price_1,
+        round(Principal / quantity,4) as Cop_Price_1,
         0 as Dollar_Discount,
         "" as Blank_7,
         "" as Blank_8,
@@ -415,12 +419,12 @@ def sales_files_logic(engine=None):
              select 
             "1" as Company,
             DIVISION,
-            Case when company_name = "Brilliant_Footwear" then  "EASFO06"
+            Case when company_name = "Brilliant Footwear" then  "EASFO06"
                     when company_name = "Shoe Pro" then  "EASFO06"
                     when company_name = "Staple On Retail Group" then  "EASFO06"
             end
             as `Customer_Number`,
-             Case when company_name = "Brilliant_Footwear" then  1
+             Case when company_name = "Brilliant Footwear" then  1
                     when company_name = "Shoe Pro" then  2
                     when company_name = "Staple On Retail Group" then  3
             END AS Store_Number,
@@ -452,8 +456,11 @@ def sales_files_logic(engine=None):
              SIZE as Size_Code,
     --         "" as Size_Code,
             SUM(quantity) as Units,
-            round(Principal / quantity / B.exchange_value,4) as Customer_Price,
-            round(Principal / quantity/ B.exchange_value,4)  as Cop_Price,
+            round(Principal / quantity / B.exchange_value,2) as Customer_Price,
+            round(Principal / quantity/ B.exchange_value,2)  as Cop_Price,
+            round(Principal / quantity / B.exchange_value,4) as Customer_Price_1,
+            round(Principal / quantity/ B.exchange_value,4)  as Cop_Price_1,
+            
             0 as Dollar_Discount,
             "" as Blank_7,
             "" as Blank_8,
@@ -495,7 +502,7 @@ def credit_files_logic(engine=None):
     	POSTED_DATE,
     	Transaction_type, FEE_CATEGORY, FEE_TYPE,
     	ranking,
-    	sum(QUANTITY_PURCHASED) as quantity, 
+    	sum(case when FEE_TYPE in  ("Principal") then QUANTITY_PURCHASED else null end ) as quantity,
     	sum(AMOUNT) as total_amount
     	from rlm_settlements_data_table
     	where status = "Not Imported"
@@ -555,12 +562,12 @@ def credit_files_logic(engine=None):
  
     	-- left(SEASON,1) as SEASON,
         "S/00" as SEASON,
-    	Case when company_name = "Brilliant_Footwear" then  "EASFO02"
+    	Case when company_name = "Brilliant Footwear" then  "EASFO02"
     		when company_name = "Shoe Pro" then  "EASFO02"
     		when company_name = "Staple On Retail Group" then  "EASFO02"
     	end
     	as `Customer_Number`,
-    	 Case when company_name = "Brilliant_Footwear" then  1
+    	 Case when company_name = "Brilliant Footwear" then  1
     				when company_name = "Shoe Pro" then  2
     				when company_name = "Staple On Retail Group" then  3
     		END AS Store_Number,
@@ -576,7 +583,7 @@ def credit_files_logic(engine=None):
     	A.Transaction_type as Misc_Description,
     	B.`CLASS CODE` as Credit_Memo_Class,
     	B.`SUBCLASS CODE` as Credit_Memo_Sub_Class,
-    	'09' as Business_Unit,
+    	'66' as Business_Unit,
     	"" as Y_Tax,
     	"" as TAX_Amount,
     	"JDE" as Sales_Manager,
@@ -602,12 +609,12 @@ def credit_files_logic(engine=None):
  
     	-- left(SEASON,1) as SEASON,
         "S/00" as SEASON,
-    	Case when company_name = "Brilliant_Footwear" then  "EASFO06"
+    	Case when company_name = "Brilliant Footwear" then  "EASFO06"
     		when company_name = "Shoe Pro" then  "EASFO06"
     		when company_name = "Staple On Retail Group" then "EASFO06"
     	end
     	as `Customer_Number`,
-    	 Case when company_name = "Brilliant_Footwear" then  1
+    	 Case when company_name = "Brilliant Footwear" then  1
     				when company_name = "Shoe Pro" then  2
     				when company_name = "Staple On Retail Group" then  3
     		END AS Store_Number,
@@ -623,7 +630,7 @@ def credit_files_logic(engine=None):
     	A.Transaction_type as Misc_Description,
     	B.`CLASS CODE` as Credit_Memo_Class,
     	B.`SUBCLASS CODE` as Credit_Memo_Sub_Class,
-    	'09' as Business_Unit,
+    	'66' as Business_Unit,
     	"" as Y_Tax,
     	"" as TAX_Amount,
     	"JDE" as Sales_Manager,
@@ -649,12 +656,12 @@ def credit_files_logic(engine=None):
 
        	-- left(SEASON,1) as SEASON,
            "S/00" as SEASON,
-       	Case when company_name = "Brilliant_Footwear" then  "EASFO06"
+       	Case when company_name = "Brilliant Footwear" then  "EASFO06"
        		when company_name = "Shoe Pro" then  "EASFO06"
        		when company_name = "Staple On Retail Group" then "EASFO06"
        	end
        	as `Customer_Number`,
-       	 Case when company_name = "Brilliant_Footwear" then  1
+       	 Case when company_name = "Brilliant Footwear" then  1
        				when company_name = "Shoe Pro" then  2
        				when company_name = "Staple On Retail Group" then  3
        		END AS Store_Number,
@@ -670,7 +677,7 @@ def credit_files_logic(engine=None):
        	A.Transaction_type as Misc_Description,
        	B.`CLASS CODE` as Credit_Memo_Class,
        	B.`SUBCLASS CODE` as Credit_Memo_Sub_Class,
-       	'09' as Business_Unit,
+       	'66' as Business_Unit,
        	"" as Y_Tax,
        	"" as TAX_Amount,
        	"JDE" as Sales_Manager,
@@ -704,7 +711,7 @@ def export_sales_conversion_files(engine=None, folder_path=None, sales_template=
     sales_df_usd['SKU300'] = sales_df_usd['SKU300'].astype(str)
     sales_df_usd['Customer_Price'] = sales_df_usd['Customer_Price'].round(2)
     sales_df_usd['Cop_Price'] = sales_df_usd['Cop_Price'].round(2)
-    sales_df_usd.columns =[x for x in range(47)]
+    sales_df_usd.columns =[x for x in range(len(sales_df_usd.columns))]
 
 
 
@@ -713,7 +720,7 @@ def export_sales_conversion_files(engine=None, folder_path=None, sales_template=
     sales_df_usd_1['SKU300'] = sales_df_usd_1['SKU300'].astype(str)
     sales_df_usd_1['Customer_Price'] = sales_df_usd_1['Customer_Price'].round(2)
     sales_df_usd_1['Cop_Price'] = sales_df_usd_1['Cop_Price'].round(2)
-    sales_df_usd_1.columns = [x for x in range(47)]
+    sales_df_usd_1.columns = [x for x in range(len(sales_df_usd.columns))]
 
 
     sales_df_cad = pd.read_sql(f'Select * from RLM_Settlement_Orders_extract_cad where division is not null order by division, style, SKU300',con=engine)
@@ -721,7 +728,7 @@ def export_sales_conversion_files(engine=None, folder_path=None, sales_template=
     sales_df_cad['SKU300'] = sales_df_cad['SKU300'].astype(str)
     sales_df_cad['Customer_Price'] = sales_df_cad['Customer_Price'].round(2)
     sales_df_cad['Cop_Price'] = sales_df_cad['Cop_Price'].round(2)
-    sales_df_cad.columns = [x for x in range(47)]
+    sales_df_cad.columns = [x for x in range(len(sales_df_usd.columns))]
 
     sales_df_cad_1 = pd.read_sql( f'Select * from RLM_Settlement_Orders_extract_cad where division is  null order by division, style, SKU300',con=engine)
     sales_df_cad_1['Style_Year'] = sales_df_cad_1['Style_Year'].astype(str)
@@ -729,7 +736,7 @@ def export_sales_conversion_files(engine=None, folder_path=None, sales_template=
     sales_df_cad_1['Customer_Price'] = sales_df_cad_1['Customer_Price'].round(2)
     sales_df_cad_1['Cop_Price'] = sales_df_cad_1['Cop_Price'].round(2)
 
-    sales_df_cad_1.columns = [x for x in range(47)]
+    sales_df_cad_1.columns = [x for x in range(len(sales_df_usd.columns))]
 
     sales_df_mxn = pd.read_sql(f'Select * from RLM_Settlement_Orders_extract_mxn where division is not null order by division, style, SKU300',con=engine)
     sales_df_mxn['Style_Year'] = sales_df_mxn['Style_Year'].astype(str)
@@ -738,14 +745,14 @@ def export_sales_conversion_files(engine=None, folder_path=None, sales_template=
     sales_df_mxn['Customer_Price'] = sales_df_mxn['Customer_Price'].astype(float).round(2)
     sales_df_mxn['Cop_Price'] = sales_df_mxn['Cop_Price'].astype(float).round(2)
 
-    sales_df_mxn.columns = [x for x in range(47)]
+    sales_df_mxn.columns = [x for x in range(len(sales_df_usd.columns))]
 
     sales_df_mxn_1 = pd.read_sql(f'Select * from RLM_Settlement_Orders_extract_mxn where division is  null order by division, style, SKU300',con=engine)
     sales_df_mxn_1['Style_Year'] = sales_df_mxn_1['Style_Year'].astype(str)
     sales_df_mxn_1['SKU300'] = sales_df_mxn_1['SKU300'].astype(str)
     sales_df_mxn_1['Customer_Price'] = sales_df_mxn_1['Customer_Price'].round(2)
     sales_df_mxn_1['Cop_Price'] = sales_df_mxn_1['Cop_Price'].round(2)
-    sales_df_mxn_1.columns = [x for x in range(47)]
+    sales_df_mxn_1.columns = [x for x in range(len(sales_df_usd.columns))]
 
 
 
@@ -1022,11 +1029,11 @@ def reconciliation_process(engine=None, settlement_id =None, account=None):
         0 AS EXCLUSIONS,
         0 as UNMAPPED
         FROM
-        (select "FBA_Orders_USD" AS TYPE, sum(Customer_Price* Units) AS AMOUNT from RLM_Settlement_Orders_extract_usd
+        (select "FBA_Orders_USD" AS TYPE, sum(Customer_Price_1* Units) AS AMOUNT from RLM_Settlement_Orders_extract_usd
         union
-        select "FBA_Orders_CAD", sum(Customer_Price* Units) from RLM_Settlement_Orders_extract_cad
+        select "FBA_Orders_CAD", sum(Customer_Price_1* Units) from RLM_Settlement_Orders_extract_cad
         union
-        select "FBA_Orders_MXN", sum(Customer_Price* Units) from RLM_Settlement_Orders_extract_mxn
+        select "FBA_Orders_MXN", sum(Customer_Price_1* Units) from RLM_Settlement_Orders_extract_mxn
         union
         select "FBA_tax_USD", sum(Tax) from RLM_Settlement_Orders_extract_usd
         union
@@ -1256,14 +1263,14 @@ def generate_files(engine, start_date, export_path, sales_template, credit_templ
             export_credit_conversion_files(engine=engine, folder_path=settlement_folder_export, credit_template=credit_template, account=each_account, settlement_id=settlement_id)
             reconciliation_process(engine=engine, settlement_id=settlement_id, account=each_account)
             # break
-        # break
+
         export_reconciliation_list(engine=engine, export_folder=reconciliation_folder_export)
 
         # scripts = []
         # scripts.append(f'drop table if exists settlement_data_lookup;')
         # scripts.append(f'''create table if not exists settlement_data_lookup
         #     Select distinct settlement_id, SETTLEMENT_START_DATE_1, SETTLEMENT_END_DATE_1  from settlements_statements
-        #     where COMPANY_NAME = 'BRILLIANT_FOOTWEAR' and status = "POSTED"
+        #     where COMPANY_NAME = 'Brilliant Footwear' and status = "POSTED"
         #     and  DATE(CONVERT_TZ(POSTED_DATE,'US/Eastern','US/Pacific')) >=  '{start_date}';''')
         #
         # scripts.append(f'set @last_lookup_date:= (select max(SETTLEMENT_END_DATE_1) from settlement_data_lookup);')
