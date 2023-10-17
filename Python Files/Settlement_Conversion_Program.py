@@ -1314,8 +1314,8 @@ def run_program(project_name, start_date, export_path, sales_template, credit_te
     port = 3306
     engine = engine_setup(project_name=project_name , hostname=hostname, username=username, password=password, port=port)
 
-    # import_settlement_reference_data(engine=engine, project_name=project_name)
-    # export_sku_without_upc(engine=engine,start_date=start_date, end_date = datetime.datetime.now().strftime('%Y-%m-%d'), export_path=export_path)
+    import_settlement_reference_data(engine=engine, project_name=project_name)
+    export_sku_without_upc(engine=engine,start_date=start_date, end_date = datetime.datetime.now().strftime('%Y-%m-%d'), export_path=export_path)
     generate_files(engine=engine, start_date =start_date, export_path=export_path, sales_template=sales_template, credit_template=credit_template)
 
 

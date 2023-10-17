@@ -317,7 +317,7 @@ def convert_store_codes():
 
 
 def Run_Program():
-    # recruit_files()
+    recruit_files()
     import_data_to_sql()
     import_excel_files_to_sql()
     rlm_data_logic()
