@@ -28,7 +28,7 @@ def google_sheet_update(project_folder, program_name, method):
     data_list = [time_now, computer_name, user, program_name, method, True]
     sheet_name = 'Eastman Footwear'
 
-    GsheetAPI.insert_row_to_sheet(sheetname=sheet_name, gid=1437113706,
+    GsheetAPI.insert_row_to_sheet(sheetname=sheet_name, gid=147287110,
                                   insert_range=['A', 1, "F", 1],
                                   data=[data_list])
 
