@@ -211,8 +211,7 @@ def generate_settlements_reference_table(engine=None, settlement_id=None, compan
     ('18540833851',	'17.29806043'),
     ('18632345621',	'17.37202966'),
     ('18723060791',	'17.70046457'),
-    ('18812755281',	'17.70046457'),
-    
+    ('18812755281',	'18.26195038')    
     ; ''')
 
     run_sql_scripts(engine=engine, scripts=scripts)
@@ -450,9 +449,9 @@ def sales_files_logic(engine=None):
              select 
             "1" as Company,
             DIVISION,
-            Case when company_name = "Brilliant Footwear" then  "EASFO06"
-                    when company_name = "Shoe Pro" then  "EASFO06"
-                    when company_name = "Staple On Retail Group" then  "EASFO06"
+            Case when company_name = "Brilliant Footwear" then  "EASFO02"
+                    when company_name = "Shoe Pro" then  "EASFO02"
+                    when company_name = "Staple On Retail Group" then  "EASFO02"
             end
             as `Customer_Number`,
              Case when company_name = "Brilliant Footwear" then  1
