@@ -33,7 +33,6 @@ def google_sheet_update(project_folder, program_name, method):
                                   data=[data_list])
 
 
-
 def engine_setup(project_name='', hostname='', username='', password='', port=''):
     engine = create_engine(f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{project_name}?charset=utf8',pool_pre_ping=True, echo=False)
     return engine
@@ -51,15 +50,23 @@ def import_settlement_reference_data(engine,project_name ):
     Database_Modules.Change_Sql_Column_Types(engine=engine, Project_name=project_name, Table_Name=table_name, DataTypes=sql_types, DataFrame=df)
     df.to_sql(name=table_name, con=engine, if_exists='append', index=False, schema=project_name, chunksize=1000, dtype=sql_types)
     print_color(f'{table_name} imported to sql', color='g')
-    engine.connect().execute(f'SET @MAX_ID=(SELECT MAX(ID) FROM rlm_settlement_reference);')
+    scripts = []
+    scripts.append(f'SET @MAX_ID=(SELECT MAX(ID) FROM rlm_settlement_reference);')
+    scripts.append(f'''drop temporary table if exists rlm_settlement_existing_references;''')
+    scripts.append(f'''create temporary table if not exists rlm_settlement_existing_references(primary key(Transaction_Type, Fee_Category, Fee_Type))
+SELECT IFNULL(Transaction_Type,"") as Transaction_Type, IFNULL(Fee_Category,"") as Fee_Category, IFNULL(Fee_Type,"") as Fee_Type FROM rlm_settlement_reference;''')
+    scripts.append(f'''drop temporary table if exists rlm_settlement_new_references;''')
+    scripts.append(f'''create temporary table if not exists rlm_settlement_new_references(primary key(Transaction_Type, Fee_Category, Fee_Type))
+SELECT DISTINCT `TRANSACTION-TYPE` as Transaction_Type, `AMOUNT-TYPE` as Fee_Category, `AMOUNT-DESCRIPTION` as Fee_Type FROM settlements;''')
+
+    run_sql_scripts(engine=engine, scripts=scripts)
     df = pd.read_sql(f'''
         SELECT * FROM rlm_settlement_reference
-         UNION
-         SELECT @MAX_ID + ROW_NUMBER() OVER (PARTITION BY "") AS ID, A.*,
-         "" AS `Credit Memo Class`, "" AS `Credit Memo Sub Class`, "" AS Notes,"" AS  `CLASS CODE`, "" AS  `SUBCLASS CODE` FROM
-         (SELECT DISTINCT `TRANSACTION-TYPE`, `AMOUNT-TYPE`, `AMOUNT-DESCRIPTION` FROM settlements
-         WHERE CONCAT( IFNULL(`TRANSACTION-TYPE`,""), IFNULL(`AMOUNT-TYPE`,""), IFNULL(`AMOUNT-DESCRIPTION`,"")) NOT IN
-         (SELECT CONCAT( IFNULL(Transaction_Type,""), IFNULL(Fee_Category,""), IFNULL(Fee_Type,"")) FROM rlm_settlement_reference)) A;
+        UNION
+        SELECT @MAX_ID + ROW_NUMBER() OVER (PARTITION BY "") AS ID, A.*,
+        "" AS `Credit Memo Class`, "" AS `Credit Memo Sub Class`, "" AS Notes,"" AS  `CLASS CODE`, "" AS  `SUBCLASS CODE` FROM
+        (select * from rlm_settlement_new_references A left join rlm_settlement_existing_references  B using(Transaction_Type, Fee_Category, Fee_Type) 
+        where B.Transaction_Type is null) A;
          ''',
                      con=engine)
 
@@ -203,13 +210,13 @@ def generate_settlements_reference_table(engine=None, settlement_id=None, compan
     ('18451175181',	'17.36609626'),
     ('18540833851',	'17.29806043'),
     ('18632345621',	'17.37202966'),
-    ('18723060791',	'17.70046457')    
+    ('18723060791',	'17.70046457'),
+    ('18812755281',	'17.70046457'),
+    
     ; ''')
 
     run_sql_scripts(engine=engine, scripts=scripts)
     print_color(f'RLM Settlements Reference table Updated', color='g')
-
-
 
 
 def export_settlement_data_daily(engine=None, settlement_id=None, export_path=None, account =None):
@@ -737,15 +744,12 @@ def export_sales_conversion_files(engine=None, folder_path=None, sales_template=
     sales_df_usd['Cop_Price'] = sales_df_usd['Cop_Price'].round(2)
     sales_df_usd.columns =[x for x in range(len(sales_df_usd.columns))]
 
-
-
-    sales_df_usd_1 = pd.read_sql( f'Select * from RLM_Settlement_Orders_extract_usd where division is  null order by division, style, SKU300',con=engine)
+    sales_df_usd_1 = pd.read_sql( f'Select * from RLM_Settlement_Orders_extract_usd where division is null order by division, style, SKU300',con=engine)
     sales_df_usd_1['Style_Year'] = sales_df_usd_1['Style_Year'].astype(str)
     sales_df_usd_1['SKU300'] = sales_df_usd_1['SKU300'].astype(str)
     sales_df_usd_1['Customer_Price'] = sales_df_usd_1['Customer_Price'].round(2)
     sales_df_usd_1['Cop_Price'] = sales_df_usd_1['Cop_Price'].round(2)
     sales_df_usd_1.columns = [x for x in range(len(sales_df_usd.columns))]
-
 
     sales_df_cad = pd.read_sql(f'Select * from RLM_Settlement_Orders_extract_cad where division is not null order by division, style, SKU300',con=engine)
     sales_df_cad['Style_Year'] = sales_df_cad['Style_Year'].astype(str)
@@ -759,7 +763,6 @@ def export_sales_conversion_files(engine=None, folder_path=None, sales_template=
     sales_df_cad_1['SKU300'] = sales_df_cad_1['SKU300'].astype(str)
     sales_df_cad_1['Customer_Price'] = sales_df_cad_1['Customer_Price'].round(2)
     sales_df_cad_1['Cop_Price'] = sales_df_cad_1['Cop_Price'].round(2)
-
     sales_df_cad_1.columns = [x for x in range(len(sales_df_usd.columns))]
 
     sales_df_mxn = pd.read_sql(f'Select * from RLM_Settlement_Orders_extract_mxn where division is not null order by division, style, SKU300',con=engine)
@@ -1343,6 +1346,7 @@ def run_program(project_name, start_date, export_path, sales_template, credit_te
     export_sku_without_upc(engine=engine,start_date=start_date, end_date = datetime.datetime.now().strftime('%Y-%m-%d'), export_path=export_path)
     generate_files(engine=engine, start_date =start_date, export_path=export_path, sales_template=sales_template, credit_template=credit_template)
     google_sheet_update(project_folder=project_folder, program_name="Eastman Settlement Program", method="Settlement Conversion Program")
+
 
 if __name__ == "__main__":
     project_name = 'eastman_footwear_amazon_seller_central'
