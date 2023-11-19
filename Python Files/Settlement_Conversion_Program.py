@@ -33,9 +33,39 @@ def google_sheet_update(project_folder, program_name, method):
                                   data=[data_list])
 
 
+
+
 def engine_setup(project_name='', hostname='', username='', password='', port=''):
     engine = create_engine(f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{project_name}?charset=utf8',pool_pre_ping=True, echo=False)
     return engine
+
+
+def import_mexico_cheat_sheet(project_folder, engine):
+    text_folder = f'{project_folder}\\Text Files'
+    create_folder(text_folder)
+    client_secret_file = f'{project_folder}\\Text Files\\client_secret.json'
+    token_file = f'{project_folder}\\Text Files\\token.json'
+    sheet_id = '1NKrBerJL848Fhb6KlS_ZBcXDitcGAXCVhlD20tOjx1o'
+    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+    GsheetAPI = GoogleSheetsAPI(credentials_file=client_secret_file, token_file=token_file, scopes=SCOPES,
+                                sheet_id=sheet_id)
+    df = GsheetAPI.get_data_from_sheet(sheetname='Conversions', range_name='A:D')
+
+    scripts = []
+    scripts.append(f'Drop Table if exists rlm_mxn_settlement_conversions')
+    run_sql_scripts(engine=engine, scripts=scripts)
+
+    sql_types = Database_Modules.Get_SQL_Types(df).data_types
+    df.to_sql(name='rlm_mxn_settlement_conversions', con=engine, if_exists='append', index=False, schema=project_name,
+                         chunksize=1000,
+                         dtype=sql_types)
+
+    print_color(f'Mexico Data Import to SQL', color='g')
+
+    scripts = []
+    scripts.append(f'Alter Table rlm_mxn_settlement_conversions add primary key(`settlement_id`)')
+    run_sql_scripts(engine=engine, scripts=scripts)
+
 
 
 def import_settlement_reference_data(engine,project_name ):
@@ -174,10 +204,12 @@ def generate_settlements_reference_table(engine=None, settlement_id=None, compan
             		select row_number() over (partition by"" order by `POSTED-DATE` asc, `ORDER-ID`, sku) as ID,
 		ACCOUNT_NAME, `SETTLEMENT-ID` AS SETTLEMENT_ID, CURRENCY,  `SETTLEMENT-START-DATE` as Start_Date, 
 		 `SETTLEMENT-END-DATE` as End_Date, `POSTED-DATE` as POSTED_DATE, 
-		ifnull(`ORDER-ID`,"") as ORDER_ID, ifnull(sku,"") as sku ,A.`TRANSACTION-TYPE` AS Transaction_type, A.`AMOUNT-TYPE` AS FEE_CATEGORY,A.`AMOUNT-DESCRIPTION` AS FEE_TYPE,AMOUNT,`QUANTITY-PURCHASED` AS QUANTITY_PURCHASED, ranking,
+		ifnull(`ORDER-ID`,"") as ORDER_ID, ifnull(sku,"") as sku ,A.`TRANSACTION-TYPE` AS Transaction_type, A.`AMOUNT-TYPE` AS FEE_CATEGORY,
+		A.`AMOUNT-DESCRIPTION` AS FEE_TYPE,AMOUNT,`QUANTITY-PURCHASED` AS QUANTITY_PURCHASED, ranking,
 		count(*), "Not Imported" as `Status`, B.`CLASS CODE` as Credit_Memo_Class from
 		(select *,
-		row_number() over (partition by ACCOUNT_NAME, `SETTLEMENT-ID`, DATE(CONVERT_TZ(`POSTED-DATE`,'US/Eastern','US/Pacific')), `ORDER-ID`, sku, `TRANSACTION-TYPE`, `AMOUNT-TYPE`,`AMOUNT-DESCRIPTION`, AMOUNT, `QUANTITY-PURCHASED`) as ranking
+		row_number() over (partition by ACCOUNT_NAME, `SETTLEMENT-ID`, DATE(CONVERT_TZ(`POSTED-DATE`,'US/Eastern','US/Pacific')), `ORDER-ID`, 
+		sku, `TRANSACTION-TYPE`, `AMOUNT-TYPE`,`AMOUNT-DESCRIPTION`, AMOUNT, `QUANTITY-PURCHASED`) as ranking
 		from  settlements
 
 		where 
@@ -193,28 +225,31 @@ def generate_settlements_reference_table(engine=None, settlement_id=None, compan
 
     scripts.append(f'alter table rlm_settlements_data_table modify column id int auto_increment primary key;')
     scripts.append(f'drop table if exists rlm_mxn_settlement_conversions;')
-    scripts.append(f'''create table if not exists rlm_mxn_settlement_conversions(
-            settlement_id bigint,
-            exchange_value decimal(20,10),
-            primary key(settlement_id));''')
-
-
-    scripts.append(f'''insert into rlm_mxn_settlement_conversions values
-    ('14980914411',	'17.83794208'),
-    ('17946377551',	'17.87619737'),
-    ('18026964631',	'17.56010511'),
-    ('18113697851',	'17.40154556'),
-    ('18194688891',	'17.39091731'),
-    ('18282034011',	'17.25520525'),
-    ('18365151091',	'17.59194528'),
-    ('18451175181',	'17.36609626'),
-    ('18540833851',	'17.29806043'),
-    ('18632345621',	'17.37202966'),
-    ('18723060791',	'17.70046457'),
-    ('18812755281',	'18.26195038')    
-    ; ''')
+    # scripts.append(f'''create table if not exists rlm_mxn_settlement_conversions(
+    #         settlement_id bigint,
+    #         exchange_value decimal(20,10),
+    #         primary key(settlement_id));''')
+    #
+    #
+    # scripts.append(f'''insert into rlm_mxn_settlement_conversions values
+    # ('14980914411',	'17.83794208'),
+    # ('17946377551',	'17.87619737'),
+    # ('18026964631',	'17.56010511'),
+    # ('18113697851',	'17.40154556'),
+    # ('18194688891',	'17.39091731'),
+    # ('18282034011',	'17.25520525'),
+    # ('18365151091',	'17.59194528'),
+    # ('18451175181',	'17.36609626'),
+    # ('18540833851',	'17.29806043'),
+    # ('18632345621',	'17.37202966'),
+    # ('18723060791',	'17.70046457'),
+    # ('18812755281',	'18.26195038')
+    # ; ''')
 
     run_sql_scripts(engine=engine, scripts=scripts)
+
+
+
     print_color(f'RLM Settlements Reference table Updated', color='g')
 
 
@@ -1242,7 +1277,10 @@ def generate_files(engine, start_date, export_path, sales_template, credit_templ
     inventory_adjustment_export = f'{export_path}\\Inventory Adjustment Conversion Files'
     create_folder(inventory_adjustment_export)
 
+
     accounts = pd.read_sql(f'Select distinct account_NAME AS account from SETTLEMENTS', con=engine)['account'].unique().tolist()
+
+
     for each_account in accounts:
         settlement_data_folder = f'{export_path}\\Settlement Data For Reference'
         existing_files = os.listdir(settlement_data_folder)
@@ -1262,7 +1300,7 @@ def generate_files(engine, start_date, export_path, sales_template, credit_templ
                     where account_name = '{each_account}' and status = "POSTED"
                         and  DATE(CONVERT_TZ(`POSTED-DATE`,'US/Eastern','US/Pacific')) >=  '{start_date}'
                         and  `SETTLEMENT-ID` not in ({existing_settlements_str})
-                      
+
                           order by `SETTLEMENT-END-DATE`
                          ;'''
 
@@ -1270,7 +1308,7 @@ def generate_files(engine, start_date, export_path, sales_template, credit_templ
             script = f'''Select distinct `SETTLEMENT-ID`, `SETTLEMENT-START-DATE`, `SETTLEMENT-END-DATE`  from settlements
                 where account_name = '{each_account}' and status = "POSTED"
                 and  DATE(CONVERT_TZ(`POSTED-DATE`,'US/Eastern','US/Pacific')) >=  '{start_date}'
-              
+
                  order by `SETTLEMENT-END-DATE`;
                    '''
         print(script)
@@ -1342,6 +1380,7 @@ def run_program(project_name, start_date, export_path, sales_template, credit_te
     engine = engine_setup(project_name=project_name , hostname=hostname, username=username, password=password, port=port)
 
     import_settlement_reference_data(engine=engine, project_name=project_name)
+    import_mexico_cheat_sheet(project_folder, engine)
     export_sku_without_upc(engine=engine,start_date=start_date, end_date = datetime.datetime.now().strftime('%Y-%m-%d'), export_path=export_path)
     generate_files(engine=engine, start_date =start_date, export_path=export_path, sales_template=sales_template, credit_template=credit_template)
     google_sheet_update(project_folder=project_folder, program_name="Eastman Settlement Program", method="Settlement Conversion Program")
