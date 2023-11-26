@@ -282,14 +282,16 @@ def sales_files_logic(engine=None):
         select ACCOUNT_NAME as company_name, SETTLEMENT_ID, CURRENCY,  ifnull(ORDER_ID,"") as Order_ID, SKU, POSTED_DATE,Start_Date,End_Date,
         sum(case when FEE_TYPE in  ("Principal") then QUANTITY_PURCHASED else null end ) as quantity,
         sum(AMOUNT) as total_amount,
-        sum(case when FEE_CATEGORY = "ItemPrice" AND FEE_TYPE ="Principal" then AMOUNT else 0 end) as Principal,
+        sum(case when FEE_CATEGORY = "ItemPrice" AND FEE_TYPE ="Principal" then AMOUNT 
+                 when TRANSACTION_TYPE  in ("Liquidations", "Liquidations Adjustments") and FEE_CATEGORY = "PRICE_TYPE" AND FEE_TYPE ="Principal" then AMOUNT     
+        else 0 end) as Principal,
         sum(case when FEE_TYPE like '%tax%' then amount else 0 end) as Tax,
         b.`FULFILLMENT-CHANNEL`
         from rlm_settlements_data_table a
         left join (select distinct `AMAZON-ORDER-ID` as  order_id, sku, `FULFILLMENT-CHANNEL` from all_orders) b using(order_id, sku)
         where status = "Not Imported"
         and TRANSACTION_TYPE not in ("Payable to Amazon", "Current Reserve Amount", "Previous Reserve Amount Balance")
-        and TRANSACTION_TYPE in ("Order", "TBYB Order Payment")
+        and TRANSACTION_TYPE in ("Order", "TBYB Order Payment", "Liquidations", "Liquidations Adjustments")
         and `FULFILLMENT-CHANNEL` = "Amazon"
         group by ACCOUNT_NAME, ORDER_ID, SKU;''')
 
@@ -299,7 +301,9 @@ def sales_files_logic(engine=None):
             select ACCOUNT_NAME as company_name, SETTLEMENT_ID, CURRENCY,  ifnull(ORDER_ID,"") as Order_ID, SKU, POSTED_DATE,Start_Date,End_Date,
             sum(case when FEE_TYPE in  ("Principal") then QUANTITY_PURCHASED else null end ) as quantity,
             sum(AMOUNT) as total_amount,
-            sum(case when FEE_CATEGORY = "ItemPrice" AND FEE_TYPE ="Principal" then AMOUNT else 0 end) as Principal,
+             sum(case when FEE_CATEGORY = "ItemPrice" AND FEE_TYPE ="Principal" then AMOUNT 
+                 when TRANSACTION_TYPE  in ("Liquidations", "Liquidations Adjustments") and FEE_CATEGORY = "PRICE_TYPE" AND FEE_TYPE ="Principal" then AMOUNT     
+                else 0 end) as Principal,
             sum(case when FEE_TYPE like '%tax%' then amount else 0 end) as Tax,
             b.`FULFILLMENT-CHANNEL` 
             from rlm_settlements_data_table a
