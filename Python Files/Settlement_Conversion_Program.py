@@ -224,7 +224,7 @@ def generate_settlements_reference_table(engine=None, settlement_id=None, compan
 
 
     scripts.append(f'alter table rlm_settlements_data_table modify column id int auto_increment primary key;')
-    scripts.append(f'drop table if exists rlm_mxn_settlement_conversions;')
+    # scripts.append(f'drop table if exists rlm_mxn_settlement_conversions;')
     # scripts.append(f'''create table if not exists rlm_mxn_settlement_conversions(
     #         settlement_id bigint,
     #         exchange_value decimal(20,10),
