@@ -67,7 +67,7 @@ class objdict(dict):
             raise AttributeError("No such attribute: " + name)
 
 class ProgramCredentials:
-    def __init__(self, environment):
+    def __init__(self):
         filename = __file__
         filename = filename.replace('/', "\\")
         folder_name = '\\'.join(filename.split('\\')[:-2])
