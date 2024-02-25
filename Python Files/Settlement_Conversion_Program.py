@@ -6,7 +6,7 @@ import sqlalchemy
 import datetime
 from sqlalchemy import create_engine, inspect
 import Database_Modules
-from Database_Modules import print_color, create_folder, run_sql_scripts, record_program_performance, ProgramCredentials
+from Database_Modules import print_color, create_folder, run_sql_scripts, record_program_performance, ProgramCredentials, engine_setup
 from openpyxl import load_workbook
 from google_sheets_api import GoogleSheetsAPI
 import platform
@@ -33,14 +33,7 @@ def google_sheet_update(project_folder, program_name, method):
                                   data=[data_list])
 
 
-
-
-def engine_setup(project_name='', hostname='', username='', password='', port=''):
-    engine = create_engine(f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{project_name}?charset=utf8',pool_pre_ping=True, echo=False)
-    return engine
-
-
-def import_mexico_cheat_sheet(project_folder, engine):
+def import_mexico_cheat_sheet(x, project_folder, engine):
     text_folder = f'{project_folder}\\Text Files'
     create_folder(text_folder)
     client_secret_file = f'{project_folder}\\Text Files\\client_secret.json'
@@ -1380,10 +1373,9 @@ def run_program():
     engine = engine_setup(project_name=x.project_name , hostname=x.hostname, username=x.username, password=x.password, port=x.port)
 
     import_settlement_reference_data(engine=engine, project_name=x.project_name)
-    import_mexico_cheat_sheet(x.project_folder, engine)
+    import_mexico_cheat_sheet(x=x, project_folder=x.project_folder, engine=engine)
     export_sku_without_upc(engine=engine,start_date=x.start_date, end_date = datetime.datetime.now().strftime('%Y-%m-%d'), export_path=x.export_path)
     generate_files(engine=engine, start_date =x.start_date, export_path=x.export_path, sales_template=x.sales_template, credit_template=x.credit_template)
-    # google_sheet_update(project_folder=project_folder, program_name="Eastman Settlement Program", method="Settlement Conversion Program")
     record_program_performance(x, program_name="Eastman Settlement Program", method="Settlement Conversion Program")
 
 

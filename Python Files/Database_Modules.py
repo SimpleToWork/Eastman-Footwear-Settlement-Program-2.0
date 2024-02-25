@@ -88,6 +88,9 @@ class ProgramCredentials:
         self.project_folder = f['project_folder'].replace("%USERNAME%", getpass.getuser())
         self.start_date = f['start_date']
 
+        self.folder = f['folder']
+        self.folder1 = f['folder1']
+
         self.webhook_url = f['webhook_url']
 
 
@@ -150,6 +153,12 @@ def run_sql_scripts(engine, scripts, tryexcept=False):
     #     print_color(script.replace("/n",""), color='p')
     # for time_item in time_list:
     #     print_color(time_item, color='b')
+
+
+def engine_setup(project_name='', hostname='', username='', password='', port=''):
+    engine = project_name(f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{project_name}?charset=utf8',pool_pre_ping=True, echo=False)
+    return engine
+
 
 
 class Get_SQL_Types():

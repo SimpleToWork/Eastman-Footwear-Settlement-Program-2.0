@@ -5,26 +5,30 @@ from datetime import datetime
 import getpass
 from sqlalchemy import create_engine
 import Database_Modules
-from Settlement_Conversion_Program import google_sheet_update
+from Database_Modules import  record_program_performance, ProgramCredentials, engine_setup, run_sql_scripts
 
 
 
 
 
-def engine_setup(Project_name='', hostname = '', username='', password='', port=''):
-    engine = create_engine(f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{Project_name}?charset=utf8',pool_pre_ping=True, echo=False)
-    return engine
+# def engine_setup(Project_name='', hostname = '', username='', password='', port=''):
+#     engine = create_engine(f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{Project_name}?charset=utf8',pool_pre_ping=True, echo=False)
+#     return engine
+#
+
 def getFile(ftp, folder, filename):
     try:
         ftp.retrbinary("RETR " + filename, open(folder + filename, 'wb').write)
         print(f'{filename} Exported')
     except:
         pass
+
+
 def delFile(ftp, file):
     ftp.delete(file)
 
 
-def recruit_files():
+def recruit_files(folder):
 
     # FTP Creds
     ftp = ftplib.FTP("ftp.efny.com")
@@ -49,7 +53,7 @@ def recruit_files():
     print("Complete")
 
 
-def import_data_to_sql():
+def import_data_to_sql(folder, engine, project_name):
 
     today = datetime.now().strftime('%m%d%y')
     check_files = os.listdir(folder)
@@ -60,7 +64,7 @@ def import_data_to_sql():
             engine.connect().execute(f'Drop Table if Exists {Table_Name};')
             df = pd.read_csv(f'{folder}\\{file}', delimiter="|")
             sql_types = Database_Modules.Get_SQL_Types(df).data_types
-            df.to_sql(name=Table_Name, con=engine, if_exists='append', index=False, schema=Project_name,chunksize=1000, dtype=sql_types)
+            df.to_sql(name=Table_Name, con=engine, if_exists='append', index=False, schema=project_name,chunksize=1000, dtype=sql_types)
             print(f'{inventory_file} Imported To SQL')
 
     prepack_file = f'MARKETPLACE_PREPACK_{today}'
@@ -70,7 +74,7 @@ def import_data_to_sql():
             engine.connect().execute(f'Drop Table if Exists {Table_Name};')
             df = pd.read_csv(f'{folder}\\{file}', delimiter="|", low_memory=False)
             sql_types = Database_Modules.Get_SQL_Types(df).data_types
-            df.to_sql(name=Table_Name, con=engine, if_exists='append', index=False, schema=Project_name, chunksize=1000,dtype=sql_types)
+            df.to_sql(name=Table_Name, con=engine, if_exists='append', index=False, schema=project_name, chunksize=1000,dtype=sql_types)
             print(f'{prepack_file} Imported To SQL')
 
     warehouse_info = f'WAREHOUSE_INFO'
@@ -81,7 +85,7 @@ def import_data_to_sql():
             df = pd.read_csv(f'{folder}\\{file}', delimiter=",", low_memory=False)
             df.columns = ['warehouse','Name','Address 1','City_State','Country','Zip_Postal Code','Currency','Whse Type','Company number for Stock Locator','Warehouse Locator','Trading Partner ID']
             sql_types = Database_Modules.Get_SQL_Types(df).data_types
-            df.to_sql(name=Table_Name, con=engine, if_exists='append', index=False, schema=Project_name, chunksize=1000, dtype=sql_types)
+            df.to_sql(name=Table_Name, con=engine, if_exists='append', index=False, schema=project_name, chunksize=1000, dtype=sql_types)
             print(f'{warehouse_info} Imported To SQL')
 
     upc_sku_info = f'UPC_SKU_Data_{today}'
@@ -91,11 +95,11 @@ def import_data_to_sql():
             engine.connect().execute(f'Drop Table if Exists {Table_Name};')
             df = pd.read_csv(f'{folder}\\{file}', delimiter=",", low_memory=False)
             sql_types = Database_Modules.Get_SQL_Types(df).data_types
-            df.to_sql(name=Table_Name, con=engine, if_exists='append', index=False, schema=Project_name, chunksize=1000,dtype=sql_types)
+            df.to_sql(name=Table_Name, con=engine, if_exists='append', index=False, schema=project_name, chunksize=1000,dtype=sql_types)
             print(f'{upc_sku_info} Imported To SQL')
 
 
-def import_excel_files_to_sql():
+def import_excel_files_to_sql(folder1, engine, project_name):
     files = os.listdir(folder1)
     for file in files:
 
@@ -104,11 +108,11 @@ def import_excel_files_to_sql():
             Table_Name = 'rlm_warehouses_updated'
             engine.connect().execute(f'Drop Table if exists {Table_Name}; ')
             sql_types = Database_Modules.Get_SQL_Types(df).data_types
-            df.to_sql(name=Table_Name, con=engine, if_exists='append', index=False, schema=Project_name,chunksize=1000, dtype=sql_types)
+            df.to_sql(name=Table_Name, con=engine, if_exists='append', index=False, schema=project_name,chunksize=1000, dtype=sql_types)
             print(f'Warehouse File Imported')
 
 
-def rlm_data_logic():
+def rlm_data_logic(engine):
     scripts = []
 
 
@@ -254,10 +258,10 @@ def rlm_data_logic():
     ####################################################################################################################
 
 
-    Database_Modules.run_sql_scripts(engine, scripts)
+    run_sql_scripts(engine=engine, scripts=scripts)
 
 
-def export_rlm_datas():
+def export_rlm_datas(folder1, engine):
     export1 = f'{folder1}\RLM Inventory Data.csv'
     export2 = f'{folder1}\RLM UPCS.csv'
     export3 = f'{folder1}\RLM WAREHOUSES.csv'
@@ -303,7 +307,7 @@ def export_rlm_datas():
     print('Distinct Styles Exported')
 
 
-def convert_store_codes():
+def convert_store_codes(folder1):
     file= f'{folder1}\\FBA Store Codes.xlsx'
     xl = pd.ExcelFile(file)
     worksheet_count = len(xl.sheet_names)
@@ -318,23 +322,20 @@ def convert_store_codes():
     df1.to_csv(f'{folder1}\\FBA Store Codes.csv', index=False)
 
 
-def Run_Program(project_folder):
-    recruit_files()
-    import_data_to_sql()
-    import_excel_files_to_sql()
-    rlm_data_logic()
-    export_rlm_datas()
-    convert_store_codes()
-    google_sheet_update(project_folder=project_folder, program_name="Eastman Settlement Program",
-                        method="RLM Data Import")
+def run_program():
+    x = ProgramCredentials()
+    engine = engine_setup(Project_name=x.project_name, hostname=x.hostname, username=x.root, password=x.password,
+                          port=x.port)
+
+    recruit_files(x.folder)
+    import_data_to_sql(x.folder, engine, x.project_name)
+    import_excel_files_to_sql(x.folder1, engine, x.project_name)
+    rlm_data_logic(engine)
+    export_rlm_datas(x.folder1, engine)
+    convert_store_codes(x.folder1)
+    record_program_performance(x, program_name="Eastman Settlement Program",   method="RLM Data Import")
 
 
 if __name__ == "__main__":
-    folder = f'G:\\My Drive\\Simple To Work\\9 - New Projects\\Eastman Footwear\\Eastman_Footwear_FBA_Shipment_Tool\\Data Files\\RLM Data\\'
-    folder1 = f'G:\\My Drive\\Simple To Work\\9 - New Projects\\Eastman Footwear\\Eastman_Footwear_FBA_Shipment_Tool\\Data Files'
-    Project_name = 'eastman_footwear_amazon_seller_central'
-    project_folder = f'C:\\Users\\{getpass.getuser()}\\Desktop\\New Projects\\Eastman Footwear\\Eastman-Footwear-Settlement-Program-2.0'
-    engine = engine_setup(Project_name=Project_name, hostname='localhost', username='root',password='Simple123', port=3306)
-
-    Run_Program(project_folder)
+    run_program()
 
