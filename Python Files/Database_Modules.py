@@ -4,6 +4,101 @@ import numpy as np
 import sqlalchemy
 import crayons
 import time
+import requests
+import platform
+import getpass
+import json
+import datetime
+
+
+def record_program_performance(x, program_name, method):
+    ip = requests.get('https://api.ipify.org').content.decode('utf8')
+
+    database_name = "stw_task_manager"
+
+    computer_name = platform.node()
+    user = getpass.getuser()
+    time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print_color(f'Data imported', color='g')
+
+    url = x.webhook_url
+    run_task_webhook = f'{url}/method_performance'
+    print_color(f'Attempting to Hit: {run_task_webhook}')
+
+    headers = {'Content-Type': 'application/json'}
+
+    data = {
+        'DateTime':time_now,
+        'Computer':computer_name,
+        'User':user,
+        'Program Name':program_name,
+        'Function':method,
+        'Success':True
+    }
+    print_color(data, color='r')
+
+    data = {"ip": ip, "data": data}
+
+    response = requests.post(url=run_task_webhook, headers=headers, json=json.dumps(data))
+
+    print("Request URL:", response.request.url)
+    print("Request method:", response.request.method)
+    print("Request headers:", response.request.headers)
+    print("Request body:", response.request.body)
+
+    print_color(f"Request status: {response.status_code}", color='g')
+    print_color(f"Request content: {response.content}", color='y')
+
+
+class objdict(dict):
+    def __getattr__(self, name):
+        if name in self:
+            return self[name]
+        else:
+            raise AttributeError("No such attribute: " + name)
+
+    def __setattr__(self, name, value):
+        self[name] = value
+
+    def __delattr__(self, name):
+        if name in self:
+            del self[name]
+        else:
+            raise AttributeError("No such attribute: " + name)
+
+class ProgramCredentials:
+    def __init__(self, environment):
+        filename = __file__
+        filename = filename.replace('/', "\\")
+        folder_name = '\\'.join(filename.split('\\')[:-2])
+
+        file_name = f'{folder_name}\\credentials.json'
+
+        f = json.load(open(file_name))
+
+        self.username = f['username']
+        self.password = f['password']
+        self.hostname = f['hostname']
+        self.port = f['port']
+        self.project_name = f['project_name']
+
+        self.export_path = f['export_path'].replace("%USERNAME%", getpass.getuser())
+        self.sales_template = f['sales_template']
+        self.credit_template = f['credit_template']
+        self.project_folder = f['project_folder'].replace("%USERNAME%", getpass.getuser())
+        self.start_date = f['start_date']
+
+        self.webhook_url = f['webhook_url']
+
+
+
+    def set_attributes(self, params):
+
+        params = objdict(params)
+        for key, val in params.items():
+            params[key] = objdict(val)
+
+        return params
 
 
 
@@ -28,6 +123,8 @@ def print_color(*text, color='', _type=''):
         crayon_color = crayons.normal
 
     print(*map(crayon_color, text))
+
+
 def run_sql_scripts(engine, scripts, tryexcept=False):
 
     time_list = []
@@ -53,6 +150,8 @@ def run_sql_scripts(engine, scripts, tryexcept=False):
     #     print_color(script.replace("/n",""), color='p')
     # for time_item in time_list:
     #     print_color(time_item, color='b')
+
+
 class Get_SQL_Types():
     def __init__(self,DataFrame):
         columnLenghts = np.vectorize(len)
@@ -166,6 +265,8 @@ class Get_SQL_Types():
             # print("Column", col, Col_Type, column_type)
 
         self.data_types = data_types
+
+
 class Add_Sql_Missing_Columns():
     def __init__(self, engine='',Project_name='', Table_Name='', DataFrame=''):
         ''' CHECK IF THE TABLE EXISTS'''
@@ -250,6 +351,8 @@ class Add_Sql_Missing_Columns():
                 print(script2)
                 if script2 != "":
                     engine.connect().execute(script2)
+
+
 class Change_Sql_Column_Types():
     def __init__(self, engine='', Project_name='', Table_Name='', DataTypes='', DataFrame=''):
 
@@ -344,7 +447,6 @@ class Change_Sql_Column_Types():
             engine.connect().execute(main_script)
 
         self.DataFrame = DataFrame
-
 
 
 class create_folder():
