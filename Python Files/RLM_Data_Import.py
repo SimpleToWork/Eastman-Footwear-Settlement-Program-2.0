@@ -324,7 +324,7 @@ def convert_store_codes(folder1):
 
 def run_program():
     x = ProgramCredentials()
-    engine = engine_setup(Project_name=x.project_name, hostname=x.hostname, username=x.username, password=x.password,
+    engine = engine_setup(project_name=x.project_name, hostname=x.hostname, username=x.username, password=x.password,
                           port=x.port)
 
     recruit_files(x.folder)
