@@ -1370,7 +1370,7 @@ def generate_files(engine, start_date, export_path, sales_template, credit_templ
 
 def run_program():
     x = ProgramCredentials()
-    engine = engine_setup(project_name=x.project_name , hostname=x.hostname, username=x.username, password=x.password, port=x.port)
+    engine = engine_setup(project_name=x.project_name, hostname=x.hostname, username=x.username, password=x.password, port=x.port)
 
     import_settlement_reference_data(engine=engine, project_name=x.project_name)
     import_mexico_cheat_sheet(x=x, project_folder=x.project_folder, engine=engine)

@@ -9,7 +9,7 @@ import platform
 import getpass
 import json
 import datetime
-
+from sqlalchemy import create_engine, inspect
 
 def record_program_performance(x, program_name, method):
     ip = requests.get('https://api.ipify.org').content.decode('utf8')
@@ -155,8 +155,12 @@ def run_sql_scripts(engine, scripts, tryexcept=False):
     #     print_color(time_item, color='b')
 
 
-def engine_setup(project_name='', hostname='', username='', password='', port=''):
-    engine = project_name(f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{project_name}?charset=utf8',pool_pre_ping=True, echo=False)
+
+def engine_setup(project_name=None, hostname = None, username=None, password=None, port=None, pool_pre_ping=True, echo=False):
+    if project_name is None:
+        engine = create_engine(f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}',pool_pre_ping=pool_pre_ping, echo=echo)
+    else:
+        engine = create_engine(f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{project_name}?charset=utf8',pool_pre_ping=pool_pre_ping, echo=echo)
     return engine
 
 
