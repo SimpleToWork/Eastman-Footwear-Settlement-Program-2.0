@@ -49,7 +49,7 @@ def import_mexico_cheat_sheet(x, project_folder, engine):
     run_sql_scripts(engine=engine, scripts=scripts)
 
     sql_types = Database_Modules.Get_SQL_Types(df).data_types
-    df.to_sql(name='rlm_mxn_settlement_conversions', con=engine, if_exists='append', index=False, schema=project_name,
+    df.to_sql(name='rlm_mxn_settlement_conversions', con=engine, if_exists='append', index=False, schema=x.project_name,
                          chunksize=1000,
                          dtype=sql_types)
 
