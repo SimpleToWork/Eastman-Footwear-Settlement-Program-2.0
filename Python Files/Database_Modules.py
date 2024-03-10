@@ -22,7 +22,7 @@ def record_program_performance(x, program_name, method):
     print_color(f'Data imported', color='g')
 
     url = x.webhook_url
-    run_task_webhook = f'{url}/method_performance'
+    run_task_webhook = f'{url}/method_performance/'
     print_color(f'Attempting to Hit: {run_task_webhook}')
 
     headers = {'Content-Type': 'application/json'}
